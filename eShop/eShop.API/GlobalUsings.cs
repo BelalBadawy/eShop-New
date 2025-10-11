@@ -1,0 +1,13 @@
+﻿global using eShop.Application.Attributes;
+global using eShop.Application.Interfaces;
+global using eShop.Application.Models;
+global using eShop.Domain.Entities;
+global using FluentValidation;
+global using Mapster;
+global using MediatR;
+global using Microsoft.Extensions.DependencyInjection;
+global using System.Data;
+global using System.Reflection;
+global using System.Security.Claims;
+global using System.Text.Json;
+global using System.Text.Json.Serialization;
