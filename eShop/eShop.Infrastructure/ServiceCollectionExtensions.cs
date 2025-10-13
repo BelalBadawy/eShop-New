@@ -14,7 +14,7 @@ namespace eShop.Infrastructure
 {
     public static class ServiceCollectionExtensions
     {
-        public static IServiceCollection AddDatabase(this IServiceCollection services, IConfiguration config)
+        internal static IServiceCollection AddDatabase(this IServiceCollection services, IConfiguration config)
         {
             return services
                 .AddDbContext<ApplicationDbContext>(options => options
@@ -26,27 +26,6 @@ namespace eShop.Infrastructure
                 .AddTransient<ApplicationDbSeeder>();
         }
 
-        public static IServiceCollection AddIdentityServices(this IServiceCollection services)
-        {
-            return services
-                .AddTransient<IUserService, UserService>()
-                .AddTransient<IRoleService, RoleService>()
-                .AddTransient<ITokenService, TokenService>();
-        }
 
-        public static IServiceCollection AddIdentitySettings(this IServiceCollection services)
-        {
-            services
-                .AddSingleton<IAuthorizationPolicyProvider, PermissionPolicyProvider>()
-                .AddScoped<IAuthorizationHandler, PermissionAuthorizationHandler>();
-            return services;
-        }
-        public static JwtConfiguration GetTokenSettings(this IServiceCollection services, IConfiguration config)
-        {
-            var tokenSettingsConfig = config.GetSection(nameof(JwtConfiguration));
-            services.Configure<JwtConfiguration>(tokenSettingsConfig);
-
-            return tokenSettingsConfig.Get<JwtConfiguration>();
-        }
     }
 }
