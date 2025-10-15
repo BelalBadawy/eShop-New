@@ -1,13 +1,6 @@
-﻿using eShop.Application.Features.Roles;
-using eShop.Application.Features.Token;
-using eShop.Application.Models.JWT;
-using eShop.Infrastructure.Identity;
-using eShop.Infrastructure.Identity.Permissions;
-using eShop.Infrastructure.Identity.Services;
+﻿using eShop.Infrastructure.Identity;
 using eShop.Infrastructure.Persistence.Contexts;
 using eShop.Infrastructure.Persistence.DbInitializers;
-using IdentityService.Application.Features.Users;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
