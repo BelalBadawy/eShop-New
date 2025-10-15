@@ -2,6 +2,7 @@
 using eShop.Application;
 using eShop.Infrastructure;
 using Newtonsoft.Json;
+using SmartStore.API.Middlewares;
 
 namespace eShop.API
 {
@@ -27,9 +28,12 @@ namespace eShop.API
             // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
             builder.Services.AddOpenApi();
 
+            builder.Services.AddApiVersioningConfig();
 
             builder.Services.AddApplicationServices();
             builder.Services.AddInfrastructureServices(builder.Configuration);
+
+            builder.Services.AddCustomSwagger();
 
             var app = builder.Build();
 
@@ -40,6 +44,15 @@ namespace eShop.API
             }
 
             app.UseMiddleware<ErrorHandlingMiddleware>();
+
+            app.UseSwaggerAuthorized();
+            app.UseSwagger();
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "MyTemplate API v1");
+                // optionally serve UI at root: c.RoutePrefix = string.Empty;
+            });
+
 
             app.UseHttpsRedirection();
 

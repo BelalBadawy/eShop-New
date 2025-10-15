@@ -78,7 +78,7 @@ namespace eShop.Infrastructure.Identity
         public static IServiceCollection AddJwtAuthentication(this IServiceCollection services, IConfiguration configuration)
         {
             var jwtSettings = configuration
-                .GetSection("tokenSettingsConfig")
+                .GetSection("JwtConfiguration")
                 .Get<JwtConfiguration>();
 
             var secret = Encoding.ASCII.GetBytes(jwtSettings.Secret);
