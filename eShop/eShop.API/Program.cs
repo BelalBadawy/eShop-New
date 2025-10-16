@@ -33,6 +33,8 @@ namespace eShop.API
             builder.Services.AddApplicationServices();
             builder.Services.AddInfrastructureServices(builder.Configuration);
 
+            builder.Services.AddCorsAllowAll();
+
             builder.Services.AddCustomSwagger();
 
             var app = builder.Build();
@@ -54,9 +56,10 @@ namespace eShop.API
             });
 
 
+            app.UseCorsAllowAll();
             app.UseHttpsRedirection();
 
-            app.UseInfrastructure();
+            app.UseInfrastructureAsync().GetAwaiter().GetResult(); ;
 
             app.MapControllers();
 

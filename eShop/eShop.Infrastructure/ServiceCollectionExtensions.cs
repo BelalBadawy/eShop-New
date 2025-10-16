@@ -33,8 +33,17 @@ namespace eShop.Infrastructure
 
 
 
-        public static IApplicationBuilder UseInfrastructure(this IApplicationBuilder app)
+        public static async Task<IApplicationBuilder> UseInfrastructureAsync(this IApplicationBuilder app)
         {
+
+            // 🔹 Run migration & seeder at startup
+            using (var scope = app.ApplicationServices.CreateScope())
+            {
+                var seeder = scope.ServiceProvider.GetRequiredService<ApplicationDbSeeder>();
+                await seeder.SeedApplicationDatabaseAsync();
+            }
+
+
             return app
                 .UseAuthentication()
                 .UseCurrentUser()

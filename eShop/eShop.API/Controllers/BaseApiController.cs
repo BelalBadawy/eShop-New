@@ -17,76 +17,80 @@ namespace eStoreCA.API.Infrastructure
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public class BaseApiController : ControllerBase
     {
-        private IConfiguration _configuration;
-        protected IConfiguration _ConfigurationApp
-        {
-            get
-            {
-                if (_configuration == null)
-                {
-                    _configuration = HttpContext.RequestServices.GetRequiredService<IConfiguration>();
-                }
 
-                return _configuration;
-            }
-        }
+        private ISender _sender = null;
+        public ISender Sender => _sender ??= HttpContext.RequestServices.GetService<ISender>();
 
+        //private IConfiguration _configuration;
+        //protected IConfiguration _ConfigurationApp
+        //{
+        //    get
+        //    {
+        //        if (_configuration == null)
+        //        {
+        //            _configuration = HttpContext.RequestServices.GetRequiredService<IConfiguration>();
+        //        }
 
-        private IMediator _mediator;
-        protected IMediator _Mediator
-        {
-            get
-            {
-                if (_mediator == null)
-                {
-                    _mediator = HttpContext.RequestServices.GetRequiredService<IMediator>();
-                }
-
-                return _mediator;
-            }
-        }
-
-        private ICurrentUserService _currentUserService;
-        protected ICurrentUserService _CurrentUserService
-        {
-            get
-            {
-                if (_currentUserService == null)
-                {
-                    _currentUserService = HttpContext.RequestServices.GetRequiredService<ICurrentUserService>();
-                }
-
-                return _currentUserService;
-            }
-        }
+        //        return _configuration;
+        //    }
+        //}
 
 
-        private IMapper _mapper;
-        protected IMapper _Mapper
-        {
-            get
-            {
-                if (_mapper == null)
-                {
-                    _mapper = HttpContext.RequestServices.GetRequiredService<IMapper>();
-                }
+        //private IMediator _mediator;
+        //protected IMediator _Mediator
+        //{
+        //    get
+        //    {
+        //        if (_mediator == null)
+        //        {
+        //            _mediator = HttpContext.RequestServices.GetRequiredService<IMediator>();
+        //        }
 
-                return _mapper;
-            }
-        }
+        //        return _mediator;
+        //    }
+        //}
 
-        private ICacheService _cache;
-        protected ICacheService _Cache
-        {
-            get
-            {
-                if (_cache == null)
-                {
-                    _cache = HttpContext.RequestServices.GetRequiredService<ICacheService>();
-                }
-                return _cache;
-            }
-        }
+        //private ICurrentUserService _currentUserService;
+        //protected ICurrentUserService _CurrentUserService
+        //{
+        //    get
+        //    {
+        //        if (_currentUserService == null)
+        //        {
+        //            _currentUserService = HttpContext.RequestServices.GetRequiredService<ICurrentUserService>();
+        //        }
+
+        //        return _currentUserService;
+        //    }
+        //}
+
+
+        //private IMapper _mapper;
+        //protected IMapper _Mapper
+        //{
+        //    get
+        //    {
+        //        if (_mapper == null)
+        //        {
+        //            _mapper = HttpContext.RequestServices.GetRequiredService<IMapper>();
+        //        }
+
+        //        return _mapper;
+        //    }
+        //}
+
+        //private ICacheService _cache;
+        //protected ICacheService _Cache
+        //{
+        //    get
+        //    {
+        //        if (_cache == null)
+        //        {
+        //            _cache = HttpContext.RequestServices.GetRequiredService<ICacheService>();
+        //        }
+        //        return _cache;
+        //    }
+        //}
 
         public BaseApiController()
         {

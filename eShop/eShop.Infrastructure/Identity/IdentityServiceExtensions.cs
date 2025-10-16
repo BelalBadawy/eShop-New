@@ -1,28 +1,28 @@
-﻿using System.Net;
-using eShop.Application.Features.Roles;
+﻿using eShop.Application.Features.Roles;
 using eShop.Application.Features.Token;
 using eShop.Application.Interfaces;
+using eShop.Application.Models;
 using eShop.Application.Models.JWT;
+using eShop.Infrastructure.Identity.Constants;
 using eShop.Infrastructure.Identity.Models;
 using eShop.Infrastructure.Identity.Permissions;
 using eShop.Infrastructure.Identity.Services;
 using eShop.Infrastructure.Persistence.Contexts;
+using eShop.Infrastructure.Persistence.DbInitializers;
 using IdentityService.Application.Features.Users;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json;
+using System.Net;
 using System.Reflection;
 using System.Security.Claims;
 using System.Text;
-using eShop.Application.Models;
-using eShop.Infrastructure.Identity.Constants;
-using Microsoft.AspNetCore.Http;
-using Newtonsoft.Json;
 
 namespace eShop.Infrastructure.Identity
 {
@@ -51,7 +51,8 @@ namespace eShop.Infrastructure.Identity
                 .AddTransient<IRoleService, RoleService>()
                 .AddTransient<ITokenService, TokenService>()
                 .AddScoped<CurrentUserMiddleware>()
-                .AddScoped<ICurrentUserService, CurrentUserService>(); ;
+                .AddScoped<ICurrentUserService, CurrentUserService>()
+                .AddTransient<IdentityDbSeeder>();
         }
 
         internal static IApplicationBuilder UseCurrentUser(this IApplicationBuilder app)

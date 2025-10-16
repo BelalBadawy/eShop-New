@@ -167,5 +167,27 @@ namespace eShop.API
 
 
 
+        public static IServiceCollection AddCorsAllowAll(this IServiceCollection services)
+        {
+            // Add CORS policy
+            return services.AddCors(options =>
+                                                 {
+                                                     options.AddPolicy("AllowAll", policy =>
+                                                     {
+                                                         policy
+                                                             .AllowAnyOrigin()
+                                                             .AllowAnyMethod()
+                                                             .AllowAnyHeader();
+                                                     });
+                                                 });
+        }
+
+
+
+
+        public static IApplicationBuilder UseCorsAllowAll(this IApplicationBuilder app)
+        {
+            return app.UseCors("AllowAll");
+        }
     }
 }

@@ -40,6 +40,8 @@ namespace eShop.Infrastructure.Persistence.Contexts
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            // First: let IdentityDbContext configure all default Identity stuff
+            base.OnModelCreating(modelBuilder);
 
             modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
 
@@ -74,7 +76,7 @@ namespace eShop.Infrastructure.Persistence.Contexts
 
             }
 
-            base.OnModelCreating(modelBuilder);
+            
         }
     }
 }

@@ -74,17 +74,17 @@ namespace eShop.Infrastructure.Persistence.DbConfigurations
         }
     }
 
-    internal class IdentityUserRoleConfig : IEntityTypeConfiguration<IdentityUserRole<int>>
+    internal class IdentityUserRoleConfig : IEntityTypeConfiguration<ApplicationUserRole>
     {
-        public void Configure(EntityTypeBuilder<IdentityUserRole<int>> builder)
+        public void Configure(EntityTypeBuilder<ApplicationUserRole> builder)
         {
             builder.ToTable("UserRoles", SchemaNames.Identity);
         }
     }
 
-    internal class IdentityUserClaimConfig : IEntityTypeConfiguration<IdentityUserClaim<int>>
+    internal class IdentityUserClaimConfig : IEntityTypeConfiguration<ApplicationUserClaim>
     {
-        public void Configure(EntityTypeBuilder<IdentityUserClaim<int>> builder)
+        public void Configure(EntityTypeBuilder<ApplicationUserClaim> builder)
         {
             builder.ToTable("UserClaims", SchemaNames.Identity);
 
@@ -96,9 +96,9 @@ namespace eShop.Infrastructure.Persistence.DbConfigurations
         }
     }
 
-    internal class IdentityUserLoginConfig : IEntityTypeConfiguration<IdentityUserLogin<int>>
+    internal class IdentityUserLoginConfig : IEntityTypeConfiguration<ApplicationUserLogin>
     {
-        public void Configure(EntityTypeBuilder<IdentityUserLogin<int>> builder)
+        public void Configure(EntityTypeBuilder<ApplicationUserLogin> builder)
         {
             builder.ToTable("UserLogins", SchemaNames.Identity);
 
@@ -113,9 +113,9 @@ namespace eShop.Infrastructure.Persistence.DbConfigurations
         }
     }
 
-    internal class IdentityUserTokenConfig : IEntityTypeConfiguration<IdentityUserToken<int>>
+    internal class IdentityUserTokenConfig : IEntityTypeConfiguration<ApplicationUserToken>
     {
-        public void Configure(EntityTypeBuilder<IdentityUserToken<int>> builder)
+        public void Configure(EntityTypeBuilder<ApplicationUserToken> builder)
         {
             builder.ToTable("UserTokens", SchemaNames.Identity);
 
