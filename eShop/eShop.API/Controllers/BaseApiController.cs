@@ -9,7 +9,7 @@ namespace eStoreCA.API.Infrastructure
 {
 
 
-    [Route("/api/v{version:apiVersion}/[controller]/[action]")]
+    [Route("/api/v{version:apiVersion}/[controller]/")]
     [Microsoft.AspNetCore.Authorization.Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [ApiController]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]

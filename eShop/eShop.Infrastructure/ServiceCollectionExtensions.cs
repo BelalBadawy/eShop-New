@@ -13,7 +13,7 @@ namespace eShop.Infrastructure
         {
             return services
                 .AddDatabase(configuration)
-                .AddIdentityServices()
+                .AddIdentityServices(configuration)
                 .AddPermissions()
                 .AddJwtAuthentication(configuration);
         }

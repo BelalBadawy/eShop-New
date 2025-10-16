@@ -28,7 +28,7 @@ namespace eShop.Infrastructure.Identity
 {
     internal static class IdentityServiceExtensions
     {
-        internal static IServiceCollection AddIdentityServices(this IServiceCollection services)
+        internal static IServiceCollection AddIdentityServices(this IServiceCollection services, IConfiguration config)
         {
             return services
                 .AddIdentity<ApplicationUser, ApplicationRole>(options =>
@@ -52,7 +52,8 @@ namespace eShop.Infrastructure.Identity
                 .AddTransient<ITokenService, TokenService>()
                 .AddScoped<CurrentUserMiddleware>()
                 .AddScoped<ICurrentUserService, CurrentUserService>()
-                .AddTransient<IdentityDbSeeder>();
+                .AddTransient<IdentityDbSeeder>()
+                .Configure<JwtConfiguration>(config.GetSection("JwtConfiguration")); ;
         }
 
         internal static IApplicationBuilder UseCurrentUser(this IApplicationBuilder app)
