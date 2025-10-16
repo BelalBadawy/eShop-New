@@ -1,10 +1,12 @@
+using eStoreCA.API.Infrastructure;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace eShop.API.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class WeatherForecastController : ControllerBase
+    public class WeatherForecastController : BaseApiController
     {
         private static readonly string[] Summaries = new[]
         {
@@ -18,6 +20,7 @@ namespace eShop.API.Controllers
             _logger = logger;
         }
 
+        [AllowAnonymous]
         [HttpGet(Name = "GetWeatherForecast")]
         public IEnumerable<WeatherForecast> Get()
         {

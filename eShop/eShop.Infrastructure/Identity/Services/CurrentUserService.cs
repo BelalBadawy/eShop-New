@@ -62,7 +62,7 @@ namespace eShop.Infrastructure.Identity.Services
         {
             if (_principal is null)
             {
-                throw new ConflictException("Invalid operation on claim.");
+               // throw new ConflictException("Invalid operation on claim.");
             }
             _principal = principal;
         }
