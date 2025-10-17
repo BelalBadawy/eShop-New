@@ -7,6 +7,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Features\Token\Queries\NewFolder\**" />
+    <EmbeddedResource Remove="Features\Token\Queries\NewFolder\**" />
+    <None Remove="Features\Token\Queries\NewFolder\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\eShop.Domain\eShop.Domain.csproj" />
   </ItemGroup>
 

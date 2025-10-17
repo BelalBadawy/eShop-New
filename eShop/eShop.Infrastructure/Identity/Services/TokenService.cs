@@ -47,12 +47,25 @@ namespace eShop.Infrastructure.Identity.Services
                 return await ResponseWrapper.FailAsync("Email not confirmed.");
             }
             // Check password
-            var isPaswordValid = await _userManager.CheckPasswordAsync(userInDb, tokenRequest.Password);
-            if (!isPaswordValid)
+            var isPasswordValid = await _userManager.CheckPasswordAsync(userInDb, tokenRequest.Password);
+            if (!isPasswordValid)
             {
+                // Increment failed access count (optional if lockout enabled)
+                await _userManager.AccessFailedAsync(userInDb);
+
                 return await ResponseWrapper.FailAsync("Invalid Credentials.");
             }
+
+            // Check if locked out
+            if (await _userManager.IsLockedOutAsync(userInDb))
+            {
+                return await ResponseWrapper.FailAsync("Account is locked. Please try again later or contact support.");
+            }
+
             #endregion
+
+            // Reset failed access count after successful login
+            await _userManager.ResetAccessFailedCountAsync(userInDb);
 
             // Generate token
 
@@ -121,8 +134,8 @@ namespace eShop.Infrastructure.Identity.Services
         private string GenerateEncryptedToken(SigningCredentials signingCredentials, IEnumerable<Claim> claims)
         {
             var token = new JwtSecurityToken(
-                issuer: AppClaim.Issuer,
-                audience: AppClaim.Audience,
+                issuer: _tokenSettings.Issuer,
+                audience: _tokenSettings.Audience,
                 claims: claims,
                 expires: DateTime.Now.AddMinutes(_tokenSettings.TokenExpiryInMunites),
                 signingCredentials: signingCredentials);
@@ -177,8 +190,8 @@ namespace eShop.Infrastructure.Identity.Services
                 ValidateIssuer = true,
                 ValidateAudience = true,
                 ValidateLifetime = true,
-                ValidIssuer = AppClaim.Issuer,
-                ValidAudience = AppClaim.Audience,
+                ValidIssuer = _tokenSettings.Issuer,
+                ValidAudience = _tokenSettings.Audience,
                 RoleClaimType = ClaimTypes.Role,
                 ClockSkew = TimeSpan.Zero,
                 IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_tokenSettings.Secret)),

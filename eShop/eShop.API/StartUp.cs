@@ -10,17 +10,22 @@ namespace eShop.API
     {
         internal static IServiceCollection AddApiVersioningConfig(this IServiceCollection services)
         {
-            return services.AddApiVersioning(options =>
-                 {
-                     options.DefaultApiVersion = new ApiVersion(1, 0);
-                     options.AssumeDefaultVersionWhenUnspecified = true;
-                     options.ReportApiVersions = true;
-                 })
-                 .AddApiExplorer(options =>
-                 {
-                     options.GroupNameFormat = "'v'VVV";
-                     options.SubstituteApiVersionInUrl = true;
-                 }).Services;
+            services
+                .AddApiVersioning(options =>
+                {
+                    options.DefaultApiVersion = new ApiVersion(1, 0);
+                    options.AssumeDefaultVersionWhenUnspecified = true;
+
+                    //  This line triggers OnStarting (disable it)
+                    options.ReportApiVersions = false;
+                })
+                .AddApiExplorer(options =>
+                {
+                    options.GroupNameFormat = "'v'VVV";
+                    options.SubstituteApiVersionInUrl = true;
+                });
+
+            return services;
         }
 
         //internal static IServiceCollection AddSwagger(this IServiceCollection services)

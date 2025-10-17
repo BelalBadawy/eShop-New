@@ -1,6 +1,6 @@
 ﻿namespace eShop.Application.Features.Token.Queries
 {
-    public class GetTokenQuery : IRequest<IResponseWrapper>
+    public class GetTokenQuery : IRequest<IResponseWrapper>, IValidateMe
     {
         public TokenRequest TokenRequest { get; set; }
     }

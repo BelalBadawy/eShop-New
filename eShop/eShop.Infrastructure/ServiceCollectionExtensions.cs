@@ -36,7 +36,7 @@ namespace eShop.Infrastructure
         public static async Task<IApplicationBuilder> UseInfrastructureAsync(this IApplicationBuilder app)
         {
 
-            // 🔹 Run migration & seeder at startup
+            //  Run migration & seeder at startup
             using (var scope = app.ApplicationServices.CreateScope())
             {
                 var seeder = scope.ServiceProvider.GetRequiredService<ApplicationDbSeeder>();

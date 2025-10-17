@@ -15,47 +15,47 @@ namespace SmartStore.API.Middlewares
 
         public async Task InvokeAsync(HttpContext context)
         {
-            //Make sure we are hitting the swagger path, and not doing it locally as it just gets annoying :-)
-            if (context.Request.Path.StartsWithSegments("/swagger") && !this.IsLocalRequest(context))
+            var path = context.Request.Path;
+
+            // Only protect /swagger and skip if it's a local request
+            if (path.StartsWithSegments("/swagger", StringComparison.OrdinalIgnoreCase)
+                && !IsLocalRequest(context))
             {
-                if (context.Request.Path.StartsWithSegments("swagger"))
+                var authHeader = context.Request.Headers["Authorization"].ToString();
+
+                // If Swagger is using Bearer token skip basic auth entirely
+                if (!string.IsNullOrEmpty(authHeader) &&
+                    authHeader.StartsWith("Bearer ", StringComparison.OrdinalIgnoreCase))
                 {
-                    string authHeader = context.Request.Headers["Authorization"];
-                    if (authHeader != null && authHeader.StartsWith("Basic "))
+                    await next(context);
+                    return;
+                }
+
+                // Check for Basic Auth
+                if (!string.IsNullOrEmpty(authHeader) &&
+                    authHeader.StartsWith("Basic ", StringComparison.OrdinalIgnoreCase))
+                {
+                    var encoded = authHeader["Basic ".Length..].Trim();
+                    var decoded = Encoding.UTF8.GetString(Convert.FromBase64String(encoded));
+                    var parts = decoded.Split(':', 2);
+                    if (parts.Length == 2 && IsAuthorized(parts[0], parts[1]))
                     {
-                        // Get the encoded username and password
-                        var encodedUsernamePassword =
-                            authHeader.Split(' ', 2, StringSplitOptions.RemoveEmptyEntries)[1]?.Trim();
-
-                        // Decode from Base64 to string
-                        var decodedUsernamePassword =
-                            Encoding.UTF8.GetString(Convert.FromBase64String(encodedUsernamePassword));
-
-                        // Split username and password
-                        var username = decodedUsernamePassword.Split(':', 2)[0];
-                        var password = decodedUsernamePassword.Split(':', 2)[1];
-
-                        // Check if login is correct
-                        if (IsAuthorized(username, password))
-                        {
-                            await next.Invoke(context);
-                            return;
-                        }
+                        await next(context);
+                        return;
                     }
-
-                    // Return authentication type (causes browser to show login dialog)
-                    context.Response.Headers["WWW-Authenticate"] = "Basic";
-
-                    // Return unauthorized
-                    context.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
                 }
-                else
+
+                //  Unauthorized  stop the pipeline safely
+                if (!context.Response.HasStarted)
                 {
-                    await next.Invoke(context);
+                    context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                    context.Response.Headers["WWW-Authenticate"] = "Basic realm=\"Swagger UI\"";
                 }
+                return;
             }
 
-            await next.Invoke(context);
+            // Not swagger continue normally
+            await next(context);
         }
 
         public bool IsAuthorized(string username, string password)

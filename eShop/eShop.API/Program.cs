@@ -12,57 +12,62 @@ namespace eShop.API
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            // Add services to the container.
+            // Add services
+            builder.Services.AddControllers()
+                .AddNewtonsoftJson(opt =>
+                    opt.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore);
 
-            builder.Services.AddControllers(options =>
-            {
-                // options.Filters.Add(typeof(LogUserActivitiesAttribute));
-            }).AddNewtonsoftJson(opt => opt.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore);
-
-
+            builder.Services.AddCustomSwagger();
+            builder.Services.AddCorsAllowAll();
             builder.Services.AddHttpContextAccessor();
-
             builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-
-
-            // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
             builder.Services.AddOpenApi();
-
             builder.Services.AddApiVersioningConfig();
-
             builder.Services.AddApplicationServices();
             builder.Services.AddInfrastructureServices(builder.Configuration);
 
-            builder.Services.AddCorsAllowAll();
-
-            builder.Services.AddCustomSwagger();
-
             var app = builder.Build();
 
-            // Configure the HTTP request pipeline.
+            // Configure the middleware pipeline
             if (app.Environment.IsDevelopment())
             {
-                app.MapOpenApi();
+                app.UseDeveloperExceptionPage();
+            }
+            else
+            {
+                app.UseMiddleware<ErrorHandlingMiddleware>();
             }
 
-            app.UseMiddleware<ErrorHandlingMiddleware>();
-
-            app.UseSwaggerAuthorized();
-            app.UseSwagger();
-            app.UseSwaggerUI(c =>
-            {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "MyTemplate API v1");
-                // optionally serve UI at root: c.RoutePrefix = string.Empty;
-            });
-
-
-            app.UseCorsAllowAll();
             app.UseHttpsRedirection();
 
-            app.UseInfrastructureAsync().GetAwaiter().GetResult(); ;
+            // Routing first
+            app.UseRouting();
 
+            // CORS before authentication
+            app.UseCorsAllowAll();
+
+            // Authentication and authorization before Swagger
+            //app.UseAuthentication();
+            //app.UseAuthorization();
+            app.UseInfrastructureAsync().GetAwaiter().GetResult();
+
+
+
+            app.UseSwaggerAuthorized();
+            // Swagger after auth
+            app.UseSwagger(c =>
+            {
+                c.RouteTemplate = "swagger/{documentName}/swagger.json";
+            });
+
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "API v1");
+                c.RoutePrefix = "swagger";
+            });
+
+            // Controllers last
             app.MapControllers();
-
 
             app.Run();
         }

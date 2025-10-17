@@ -60,11 +60,15 @@ namespace eShop.Infrastructure.Identity.Services
 
         public void SetCurrentUser(ClaimsPrincipal principal)
         {
-            if (_principal is null)
+            //if (_principal is null)
+            //{
+            //    // throw new ConflictException("Invalid operation on claim.");
+            //}
+
+            if (_principal != null)
             {
-               // throw new ConflictException("Invalid operation on claim.");
+                _principal = principal;
             }
-            _principal = principal;
         }
 
         public IList<Claim> GetClaims()
