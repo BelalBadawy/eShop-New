@@ -189,7 +189,7 @@ namespace eShop.Infrastructure.Identity.Services
                 ValidateIssuerSigningKey = true,
                 ValidateIssuer = true,
                 ValidateAudience = true,
-                ValidateLifetime = true,
+                ValidateLifetime = false,
                 ValidIssuer = _tokenSettings.Issuer,
                 ValidAudience = _tokenSettings.Audience,
                 RoleClaimType = ClaimTypes.Role,

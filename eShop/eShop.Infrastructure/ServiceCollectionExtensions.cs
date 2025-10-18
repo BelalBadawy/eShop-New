@@ -18,7 +18,6 @@ namespace eShop.Infrastructure
                 .AddJwtAuthentication(configuration);
         }
 
-
         internal static IServiceCollection AddDatabase(this IServiceCollection services, IConfiguration config)
         {
             return services
@@ -30,8 +29,6 @@ namespace eShop.Infrastructure
                     }))
                 .AddTransient<ApplicationDbSeeder>();
         }
-
-
 
         public static async Task<IApplicationBuilder> UseInfrastructureAsync(this IApplicationBuilder app)
         {

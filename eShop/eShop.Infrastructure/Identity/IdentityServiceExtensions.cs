@@ -94,121 +94,6 @@ namespace eShop.Infrastructure.Identity
             return tokenSettingsConfig.Get<JwtConfiguration>();
         }
 
-        //public static IServiceCollection AddJwtAuthenticationWORKING(this IServiceCollection services, IConfiguration configuration)
-        //{
-        //    var jwtSettings = configuration
-        //        .GetSection("JwtConfiguration")
-        //        .Get<JwtConfiguration>();
-
-        //    // It's good practice to ensure the settings are loaded correctly
-        //    if (jwtSettings == null)
-        //    {
-        //        throw new InvalidOperationException("JwtConfiguration section is not configured in appsettings.json");
-        //    }
-
-        //    var key = Encoding.UTF8.GetBytes(jwtSettings.Secret);
-
-        //    services
-        //        .AddAuthentication(options =>
-        //        {
-        //            options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-        //            options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-        //        })
-        //        .AddJwtBearer(options =>
-        //        {
-        //            options.RequireHttpsMetadata = false; // Set to true in production environments
-        //            options.SaveToken = true;
-        //            options.TokenValidationParameters = new TokenValidationParameters
-        //            {
-        //                ValidateIssuerSigningKey = true,
-        //                IssuerSigningKey = new SymmetricSecurityKey(key),
-        //                ValidateIssuer = true,
-        //                ValidIssuer = jwtSettings.Issuer,
-        //                ValidateAudience = true,
-        //                ValidAudience = jwtSettings.Audience,
-        //                ValidateLifetime = true,
-        //                ClockSkew = TimeSpan.Zero,
-        //                RoleClaimType = ClaimTypes.Role
-        //            };
-
-        //            options.Events = new JwtBearerEvents
-        //            {
-        //                // This event is triggered when the token is fundamentally invalid (e.g., bad signature, expired).
-        //                // Its purpose is for LOGGING. Do not write the response here.
-        //                OnAuthenticationFailed = context =>
-        //                {
-        //                    // Log the error here if you have a logger instance.
-        //                    // e.g., _logger.LogError(context.Exception, "Authentication failed.");
-        //                    return Task.CompletedTask;
-        //                },
-
-        //                // This event is triggered when authentication is required but fails or is missing.
-        //                // This is the CORRECT place to write a custom 401 Unauthorized response.
-        //                OnChallenge = context =>
-        //                {
-        //                    // HandleResponse() prevents the default authentication challenge logic from running.
-        //                    // This is critical to avoid conflicts and the "response has already started" error.
-        //                    context.HandleResponse();
-
-        //                    // A safeguard, though HandleResponse should prevent this.
-        //                    if (context.Response.HasStarted)
-        //                    {
-        //                        return Task.CompletedTask;
-        //                    }
-
-        //                    context.Response.StatusCode = StatusCodes.Status401Unauthorized;
-        //                    context.Response.ContentType = "application/json";
-
-        //                    var message = "You are not authorized.";
-
-        //                    // FIX: Explicitly declare the type as 'string' to resolve the CS0815 error.
-        //                    //  string result = JsonSerializer.Serialize(ResponseWrapper.Fail(message));
-        //                    var result = JsonConvert.SerializeObject(ResponseWrapper.Fail("You are not authorized."));
-
-        //                    return context.Response.WriteAsync(result);
-        //                },
-
-        //                // This event is triggered when the user is authenticated but lacks the required permissions.
-        //                // This is the CORRECT place to write a custom 403 Forbidden response.
-        //                OnForbidden = context =>
-        //                {
-        //                    if (context.Response.HasStarted)
-        //                    {
-        //                        return Task.CompletedTask;
-        //                    }
-
-        //                    context.Response.StatusCode = StatusCodes.Status403Forbidden;
-        //                    context.Response.ContentType = "application/json";
-
-        //                    // FIX: Explicitly declare the type as 'string' here as well for consistency.
-        //                    // string result = JsonSerializer.Serialize(ResponseWrapper.Fail("You are not authorized to access this resource."));
-        //                    var result = JsonConvert.SerializeObject(ResponseWrapper.Fail("You are not authorized to access this resource."));
-
-        //                    return context.Response.WriteAsync(result);
-        //                }
-        //            };
-        //        });
-
-        //    // Authorization policies based on permissions
-        //    services.AddAuthorization(options =>
-        //    {
-        //        foreach (var prop in typeof(AppPermissions)
-        //            .GetNestedTypes()
-        //            .SelectMany(t => t.GetFields(BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy)))
-        //        {
-        //            var value = prop.GetValue(null)?.ToString();
-        //            if (!string.IsNullOrWhiteSpace(value))
-        //            {
-        //                options.AddPolicy(value, policy =>
-        //                    policy.RequireClaim(AppClaim.Permission, value));
-        //            }
-        //        }
-        //    });
-
-        //    return services;
-        //}
-
-
         public static IServiceCollection AddJwtAuthentication(this IServiceCollection services, IConfiguration configuration)
         {
             var jwtSettings = configuration
@@ -248,6 +133,19 @@ namespace eShop.Infrastructure.Identity
 
                   bearer.Events = new JwtBearerEvents
                   {
+                      OnMessageReceived = context =>
+                      {
+                          // 🟢 Skip token validation if hitting the refresh-token endpoint
+                          var path = context.HttpContext.Request.Path.Value ?? string.Empty;
+
+                          // 🟢 Skip JWT validation for any request containing "refresh-token" in the path
+                          if (path.Contains("refresh-token", StringComparison.OrdinalIgnoreCase))
+                          {
+                              context.NoResult();
+                          }
+
+                          return Task.CompletedTask;
+                      },
                       OnAuthenticationFailed = context =>
                       {
                           if (context.Exception is SecurityTokenExpiredException)

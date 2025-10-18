@@ -3,7 +3,7 @@ using eShop.Application.Features.Token.Queries;
 
 namespace eShop.API.Controllers
 {
-   
+
     public class TokenController : BaseApiController
     {
         [HttpPost("login")]
@@ -19,6 +19,7 @@ namespace eShop.API.Controllers
         }
 
         [HttpPost("refresh-token")]
+        [AllowAnonymous]
         public async Task<IActionResult> GetRefreshTokenAsync([FromBody] RefreshTokenRequest refreshTokenRequest)
         {
             var response = await Sender.Send(new GetRefreshTokenQuery { RefreshTokenRequest = refreshTokenRequest });
