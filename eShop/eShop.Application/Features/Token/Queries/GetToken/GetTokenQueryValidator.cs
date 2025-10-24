@@ -1,6 +1,7 @@
-﻿using eShop.Application.Features.Token.Queries;
+﻿
+using eShop.Application.Features.Token.Queries;
 
-namespace IdentityService.Application.Features.Users.Validators
+namespace eShop.Application.Features.Token.Queries
 {
     public class GetTokenQueryValidator : AbstractValidator<GetTokenQuery>
     {

@@ -4,7 +4,7 @@ using eShop.Application.Features.Roles.Queries;
 
 namespace WebApi.Controllers
 {
-   
+
     public class RolesController : BaseApiController
     {
         [HttpPost]
@@ -23,12 +23,21 @@ namespace WebApi.Controllers
         [MustHavePermission(AppService.Identity, AppFeature.Roles, AppAction.Read)]
         public async Task<IActionResult> GetRoles()
         {
-            var response = await Sender.Send(new GetRolesQuery());
-            if (response.IsSuccessful)
+            try
             {
-                return Ok(response);
+                var response = await Sender.Send(new GetRolesQuery());
+                if (response.IsSuccessful)
+                {
+                    return Ok(response);
+                }
+                return NotFound(response);
             }
-            return NotFound(response);
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+
         }
 
         [HttpPut]

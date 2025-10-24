@@ -152,14 +152,36 @@ namespace eShop.Infrastructure.Identity
                           {
                               context.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
                               context.Response.ContentType = "application/json";
-                              var result = JsonConvert.SerializeObject(ResponseWrapper.Fail("The Token is expired."));
+                              var result = JsonConvert.SerializeObject(
+                                  ResponseWrapper.Fail("The token has expired. Please log in again.")
+                              );
+                              return context.Response.WriteAsync(result);
+                          }
+                          else if (context.Exception is ArgumentException && context.Exception.Message.Contains("IDX14100"))
+                          {
+                              context.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
+                              context.Response.ContentType = "application/json";
+                              var result = JsonConvert.SerializeObject(
+                                  ResponseWrapper.Fail("The provided token format is invalid.")
+                              );
+                              return context.Response.WriteAsync(result);
+                          }
+                          else if (context.Exception is SecurityTokenInvalidSignatureException)
+                          {
+                              context.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
+                              context.Response.ContentType = "application/json";
+                              var result = JsonConvert.SerializeObject(
+                                  ResponseWrapper.Fail("The token signature is invalid.")
+                              );
                               return context.Response.WriteAsync(result);
                           }
                           else
                           {
-                              context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+                              context.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
                               context.Response.ContentType = "application/json";
-                              var result = JsonConvert.SerializeObject(ResponseWrapper.Fail("An unhandled error has occurred."));
+                              var result = JsonConvert.SerializeObject(
+                                  ResponseWrapper.Fail("You are not authorized to access this resource.")
+                              );
                               return context.Response.WriteAsync(result);
                           }
                       },

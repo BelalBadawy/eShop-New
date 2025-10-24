@@ -1,7 +1,7 @@
 ﻿using eShop.Application.Features.Token;
+using eShop.Application.Features.Token.Queries;
 using eShop.Application.Models;
 using eShop.Application.Models.JWT;
-using eShop.Infrastructure.Identity.Constants;
 using eShop.Infrastructure.Identity.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;

@@ -1,4 +1,4 @@
-﻿namespace eShop.Application.Features.Token
+﻿namespace eShop.Application.Features.Token.Queries
 {
     public class RefreshTokenRequest
     {

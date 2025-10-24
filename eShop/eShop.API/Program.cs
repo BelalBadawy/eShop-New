@@ -29,14 +29,14 @@ namespace eShop.API
             var app = builder.Build();
 
             // Configure the middleware pipeline
-            if (app.Environment.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
-            else
-            {
-                app.UseMiddleware<ErrorHandlingMiddleware>();
-            }
+            // if (app.Environment.IsDevelopment())
+            //{
+            app.UseDeveloperExceptionPage();
+            //}
+            //else
+            //{
+            //  app.UseMiddleware<ErrorHandlingMiddleware>();
+            //}
 
             app.UseHttpsRedirection();
 
