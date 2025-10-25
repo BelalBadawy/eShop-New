@@ -1,6 +1,7 @@
-﻿using eShop.Application.Features.Users.Models.Requests;
+﻿using eShop.Application.Features.Users.Commands;
+using eShop.Application.Features.Users.Models.Requests;
 
-namespace IdentityService.Application.Features.Users
+namespace eShop.Application.Features.Users
 {
     public interface IUserService
     {
@@ -8,7 +9,7 @@ namespace IdentityService.Application.Features.Users
         Task<IResponseWrapper> UpdateUserAsync(UpdateUserRequest userUpdate);
 
         // Start
-        Task<IResponseWrapper> GetUserByIdAsync(string userId);
+        Task<IResponseWrapper> GetUserByIdAsync(int userId);
         Task<IResponseWrapper> GetAllUsersAsync();
         Task<IResponseWrapper> ChangeUserPasswordAsync(ChangePasswordRequest changePassword);
         Task<IResponseWrapper> ChangeUserStatusAsync(ChangeUserStatusRequest changeUserStatus);

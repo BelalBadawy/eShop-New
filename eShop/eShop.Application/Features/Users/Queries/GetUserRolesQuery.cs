@@ -1,4 +1,4 @@
-﻿namespace IdentityService.Application.Features.Users.Queries
+﻿namespace eShop.Application.Features.Users.Queries
 {
     public class GetUserRolesQuery : IRequest<IResponseWrapper>
     {

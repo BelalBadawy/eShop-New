@@ -1,6 +1,7 @@
-﻿using eShop.Application.Features.Users.Models.Requests;
+﻿using eShop.Application.Features.Users;
+using eShop.Application.Features.Users.Models.Requests;
 
-namespace IdentityService.Application.Features.Users.Commands
+namespace eShop.Application.Features.Users.Commands
 {
     public class ChangeUserPasswordCommand : IRequest<IResponseWrapper>
     {

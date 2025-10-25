@@ -90,47 +90,47 @@ namespace eShop.Application.Extensions
             this TypeAdapterSetter<TSource, TDestination> setter,
             IdProtector protector)
         {
-            ArgumentNullException.ThrowIfNull(setter);
-            ArgumentNullException.ThrowIfNull(protector);
+            //ArgumentNullException.ThrowIfNull(setter);
+            //ArgumentNullException.ThrowIfNull(protector);
 
-            var destProps = typeof(TDestination)
-                .GetProperties(BindingFlags.Public | BindingFlags.Instance)
-                .Where(p => p.GetCustomAttribute<ProtectIdAttribute>() != null);
+            //var destProps = typeof(TDestination)
+            //    .GetProperties(BindingFlags.Public | BindingFlags.Instance)
+            //    .Where(p => p.GetCustomAttribute<ProtectIdAttribute>() != null);
 
-            foreach (var destProp in destProps)
-            {
-                var srcProp = typeof(TSource).GetProperty(destProp.Name);
-                if (srcProp == null) continue;
+            //foreach (var destProp in destProps)
+            //{
+            //    var srcProp = typeof(TSource).GetProperty(destProp.Name);
+            //    if (srcProp == null) continue;
 
-                // Entity → DTO (int to string)
-                if (srcProp.PropertyType == typeof(int) && destProp.PropertyType == typeof(string))
-                {
-                    setter.Map(destProp.Name,
-                        (TSource src) => protector.Protect((int)srcProp.GetValue(src)!));
-                }
-                // DTO → Entity (string to int)
-                else if (srcProp.PropertyType == typeof(string) && destProp.PropertyType == typeof(int))
-                {
-                    setter.Map(destProp.Name,
-                        (TSource src) => protector.Unprotect((string)srcProp.GetValue(src)!));
-                }
-                // Handle nullable types: int? → string
-                else if (srcProp.PropertyType == typeof(int?) && destProp.PropertyType == typeof(string))
-                {
-                    setter.Map(destProp.Name,
-                        (TSource src) => ((int?)srcProp.GetValue(src)).HasValue
-                            ? protector.Protect(((int?)srcProp.GetValue(src))!.Value)
-                            : null);
-                }
-                // Handle nullable types: string → int?
-                else if (srcProp.PropertyType == typeof(string) && destProp.PropertyType == typeof(int?))
-                {
-                    setter.Map(destProp.Name,
-                        (TSource src) => !string.IsNullOrEmpty((string)srcProp.GetValue(src))
-                            ? protector.Unprotect((string)srcProp.GetValue(src)!)
-                            : (int?)null);
-                }
-            }
+            //    // Entity → DTO (int to string)
+            //    if (srcProp.PropertyType == typeof(int) && destProp.PropertyType == typeof(string))
+            //    {
+            //        setter.Map(destProp.Name,
+            //            (TSource src) => protector.Protect((int)srcProp.GetValue(src)!));
+            //    }
+            //    // DTO → Entity (string to int)
+            //    else if (srcProp.PropertyType == typeof(string) && destProp.PropertyType == typeof(int))
+            //    {
+            //        setter.Map(destProp.Name,
+            //            (TSource src) => protector.Unprotect((string)srcProp.GetValue(src)!));
+            //    }
+            //    // Handle nullable types: int? → string
+            //    else if (srcProp.PropertyType == typeof(int?) && destProp.PropertyType == typeof(string))
+            //    {
+            //        setter.Map(destProp.Name,
+            //            (TSource src) => ((int?)srcProp.GetValue(src)).HasValue
+            //                ? protector.Protect(((int?)srcProp.GetValue(src))!.Value)
+            //                : null);
+            //    }
+            //    // Handle nullable types: string → int?
+            //    else if (srcProp.PropertyType == typeof(string) && destProp.PropertyType == typeof(int?))
+            //    {
+            //        setter.Map(destProp.Name,
+            //            (TSource src) => !string.IsNullOrEmpty((string)srcProp.GetValue(src))
+            //                ? protector.Unprotect((string)srcProp.GetValue(src)!)
+            //                : (int?)null);
+            //    }
+            //}
 
             return setter;
         }

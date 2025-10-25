@@ -1,6 +1,6 @@
 ﻿using eShop.Application.Features.Users.Models.Requests;
 
-namespace IdentityService.Application.Features.Users.Commands
+namespace eShop.Application.Features.Users.Commands
 {
     public class ChangeUserStatusCommand : IRequest<IResponseWrapper>
     {

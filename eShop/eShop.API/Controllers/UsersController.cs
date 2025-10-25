@@ -1,12 +1,16 @@
-﻿using eShop.Application.Features.Users.Models.Requests;
+﻿using eShop.Application.Features.Users;
+using eShop.Application.Features.Users.Commands;
+using eShop.Application.Features.Users.Models.Requests;
+using eShop.Application.Features.Users.Queries;
+using eShop.Application.Helpers;
 using IdentityService.Application.Features.Users.Commands;
-using IdentityService.Application.Features.Users.Queries;
 
 namespace WebApi.Controllers
 {
-  
+
     public class UsersController : BaseApiController
     {
+
         [HttpPost("register")]
         [MustHavePermission(AppService.Identity, AppFeature.Users, AppAction.Create)]
         public async Task<IActionResult> RegisterUserAsync([FromBody] UserRegistrationRequest userRegistration)
@@ -24,11 +28,16 @@ namespace WebApi.Controllers
         [MustHavePermission(AppService.Identity, AppFeature.Users, AppAction.Read)]
         public async Task<IActionResult> GetUserByIdAync(string userId)
         {
-            var response = await Sender.Send(new GetUserByIdQuery { UserId = userId });
+            if (!IdProtector.TryUnprotect(userId, out var id))
+                return BadRequest(ResponseWrapper.FailAsync("Invalid or tampered UserId."));
+
+            var response = await Sender.Send(new GetUserByIdQuery { UserId = id });
+
             if (response.IsSuccessful)
             {
                 return Ok(response);
             }
+
             return NotFound(response);
         }
 
@@ -37,6 +46,7 @@ namespace WebApi.Controllers
         public async Task<IActionResult> GetAllUsersAsync()
         {
             var response = await Sender.Send(new GetAllUsersQuery());
+
             if (response.IsSuccessful)
             {
                 return Ok(response);

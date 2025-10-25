@@ -1,8 +1,8 @@
-﻿namespace IdentityService.Application.Features.Users.Queries
+﻿namespace eShop.Application.Features.Users.Queries
 {
-    public class GetUserByIdQuery : IRequest<IResponseWrapper>
+    public class GetUserByIdQuery : IRequest<IResponseWrapper>, IValidateMe
     {
-        public string UserId { get; set; }
+        public int UserId { get; set; }
     }
 
     public class GetUserByIdQueryHanlder : IRequestHandler<GetUserByIdQuery, IResponseWrapper>

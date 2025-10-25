@@ -1,5 +1,6 @@
 
 using eShop.API.Helpers;
+using eShop.Application.Helpers;
 using MapsterMapper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -20,6 +21,10 @@ namespace eStoreCA.API.Infrastructure
 
         private ISender _sender = null;
         public ISender Sender => _sender ??= HttpContext.RequestServices.GetService<ISender>();
+
+        private IdProtector _idProtector = null;
+        public IdProtector IdProtector => _idProtector ??= HttpContext.RequestServices.GetService<IdProtector>();
+
 
         //private IConfiguration _configuration;
         //protected IConfiguration _ConfigurationApp
@@ -201,7 +206,7 @@ namespace eStoreCA.API.Infrastructure
         //    }
         //}
 
-        
+
 
     }
 }

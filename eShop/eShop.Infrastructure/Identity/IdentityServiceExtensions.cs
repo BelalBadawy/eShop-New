@@ -24,6 +24,7 @@ using System.Net;
 using System.Reflection;
 using System.Security.Claims;
 using System.Text;
+using eShop.Application.Features.Users;
 
 namespace eShop.Infrastructure.Identity
 {

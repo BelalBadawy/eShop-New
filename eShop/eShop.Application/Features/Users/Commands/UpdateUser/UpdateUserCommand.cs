@@ -1,8 +1,7 @@
-﻿using eShop.Application.Features.Users.Models.Requests;
-
-namespace IdentityService.Application.Features.Users.Commands
+﻿
+namespace eShop.Application.Features.Users.Commands
 {
-    public class UpdateUserCommand : IRequest<IResponseWrapper>
+    public class UpdateUserCommand : IRequest<IResponseWrapper>, IValidateMe
     {
         public UpdateUserRequest UpdateUser { get; set; }
     }

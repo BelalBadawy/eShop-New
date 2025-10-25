@@ -1,5 +1,8 @@
-﻿using eShop.Application.Features.Users.Models.Requests;
+﻿using eShop.Application.Features.Users;
+using eShop.Application.Features.Users.Commands;
+using eShop.Application.Features.Users.Models.Requests;
 using eShop.Application.Features.Users.Models.Responses;
+using eShop.Application.Helpers;
 using eShop.Application.Models;
 using eShop.Infrastructure.Identity.Constants;
 using eShop.Infrastructure.Identity.Models;
@@ -13,23 +16,28 @@ namespace eShop.Infrastructure.Identity.Services
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly RoleManager<ApplicationRole> _roleManager;
+        private readonly IdProtector _idProtector;
 
-        public UserService(UserManager<ApplicationUser> userManager, RoleManager<ApplicationRole> roleManager)
+        public UserService(UserManager<ApplicationUser> userManager,
+            RoleManager<ApplicationRole> roleManager,
+            IdProtector idProtector)
         {
             _userManager = userManager;
             _roleManager = roleManager;
+            _idProtector = idProtector;
         }
 
         public async Task<IResponseWrapper> RegisterUserAsync(UserRegistrationRequest userRegistration)
         {
             var userWithSameEmail = await _userManager.FindByEmailAsync(userRegistration.Email);
-            if (userWithSameEmail is not null) return await ResponseWrapper.FailAsync("Email address already taken.");
+            if (userWithSameEmail is not null)
+                return await ResponseWrapper.FailAsync("Email address already taken.");
 
             var newUser = new ApplicationUser
             {
                 FullName = userRegistration.FullName,
                 Email = userRegistration.Email,
-                UserName = userRegistration.Username,
+                UserName = userRegistration.Email,
                 PhoneNumber = userRegistration.PhoneNumber,
                 IsActive = userRegistration.ActivateUser,
                 EmailConfirmed = userRegistration.AutoConfirmEmail,
@@ -59,7 +67,7 @@ namespace eShop.Infrastructure.Identity.Services
 
         public async Task<IResponseWrapper> UpdateUserAsync(UpdateUserRequest userUpdate)
         {
-            var userInDb = await _userManager.FindByIdAsync(userUpdate.UserId);
+            var userInDb = await _userManager.FindByIdAsync(userUpdate.UserId.ToString());
             if (userInDb is not null)
             {
                 userInDb.FullName = userUpdate.FullName;
@@ -87,9 +95,9 @@ namespace eShop.Infrastructure.Identity.Services
         }
         #endregion
 
-        public async Task<IResponseWrapper> GetUserByIdAsync(string userId)
+        public async Task<IResponseWrapper> GetUserByIdAsync(int userId)
         {
-            var userInDb = await _userManager.FindByIdAsync(userId);
+            var userInDb = await _userManager.FindByIdAsync(userId.ToString());
             if (userInDb is not null)
             {
                 var mappedUser = userInDb.Adapt<UserResponse>();
@@ -107,6 +115,11 @@ namespace eShop.Infrastructure.Identity.Services
             if (usersInDb.Count > 0)
             {
                 var mappedUsers = usersInDb.Adapt<List<UserResponse>>();
+                foreach (var item in mappedUsers)
+                {
+                    item.Id = _idProtector.Protect(int.Parse(item.Id));
+                }
+
                 return await ResponseWrapper<List<UserResponse>>.SuccessAsync(data: mappedUsers);
             }
             return await ResponseWrapper.FailAsync("No Users were found.");

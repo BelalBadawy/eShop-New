@@ -1,4 +1,4 @@
-﻿using eShop.Application.Features.Users.Models.Requests;
+﻿using eShop.Application.Features.Users;
 
 namespace IdentityService.Application.Features.Users.Commands
 {
