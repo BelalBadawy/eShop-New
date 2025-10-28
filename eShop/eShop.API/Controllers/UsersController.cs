@@ -24,14 +24,11 @@ namespace WebApi.Controllers
             return BadRequest(response);
         }
 
-        [HttpGet("{userId}")]
+        [HttpGet("{userId:int}")]
         [MustHavePermission(AppService.Identity, AppFeature.Users, AppAction.Read)]
-        public async Task<IActionResult> GetUserByIdAync(string userId)
+        public async Task<IActionResult> GetUserByIdAync(int userId)
         {
-            if (!IdProtector.TryUnprotect(userId, out var id))
-                return BadRequest(ResponseWrapper.FailAsync("Invalid or tampered UserId."));
-
-            var response = await Sender.Send(new GetUserByIdQuery { UserId = id });
+            var response = await Sender.Send(new GetUserByIdQuery { UserId = userId });
 
             if (response.IsSuccessful)
             {

@@ -115,10 +115,6 @@ namespace eShop.Infrastructure.Identity.Services
             if (usersInDb.Count > 0)
             {
                 var mappedUsers = usersInDb.Adapt<List<UserResponse>>();
-                foreach (var item in mappedUsers)
-                {
-                    item.Id = _idProtector.Protect(int.Parse(item.Id));
-                }
 
                 return await ResponseWrapper<List<UserResponse>>.SuccessAsync(data: mappedUsers);
             }
