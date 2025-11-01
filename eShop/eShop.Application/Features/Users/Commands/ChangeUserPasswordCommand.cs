@@ -19,7 +19,7 @@ namespace eShop.Application.Features.Users.Commands
 
         public async Task<IResponseWrapper> Handle(ChangeUserPasswordCommand request, CancellationToken cancellationToken)
         {
-            return await _userService.ChangeUserPasswordAsync(request.ChangePassword);
+            return await _userService.ChangeUserPasswordAsync(request.ChangePassword, cancellationToken);
         }
     }
 }

@@ -18,7 +18,7 @@ namespace eShop.Application.Features.Users.Commands
 
         public async Task<IResponseWrapper> Handle(UpdateUserRolesCommand request, CancellationToken cancellationToken)
         {
-            return await _userService.UpdateUserRolesAsync(request.UpdateUserRoles);
+            return await _userService.UpdateUserRolesAsync(request.UpdateUserRoles, cancellationToken);
         }
     }
 }

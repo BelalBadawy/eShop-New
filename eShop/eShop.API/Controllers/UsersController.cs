@@ -3,6 +3,7 @@ using eShop.Application.Features.Users.Commands;
 using eShop.Application.Features.Users.Models.Requests;
 using eShop.Application.Features.Users.Queries;
 using eShop.Application.Helpers;
+using eShop.Application.Models.Pagination;
 using IdentityService.Application.Features.Users.Commands;
 
 namespace WebApi.Controllers
@@ -50,6 +51,21 @@ namespace WebApi.Controllers
             }
             return NotFound(response);
         }
+
+
+        [HttpGet("paged-list")]
+        [MustHavePermission(AppService.Identity, AppFeature.Users, AppAction.Read)]
+        public async Task<IActionResult> GetUsersPagedList([FromQuery] PagedFilterRequest query)
+        {
+            var response = await Sender.Send(new GetUsersPagedQuery() { PagedFilterRequest = query });
+
+            if (response.IsSuccessful)
+            {
+                return Ok(response);
+            }
+            return NotFound(response);
+        }
+
 
         [HttpPut]
         [MustHavePermission(AppService.Identity, AppFeature.Users, AppAction.Update)]

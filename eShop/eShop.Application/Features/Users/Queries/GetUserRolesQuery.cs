@@ -16,7 +16,7 @@
 
         public async Task<IResponseWrapper> Handle(GetUserRolesQuery request, CancellationToken cancellationToken)
         {
-            return await _userService.GetUserRolesAsync(request.UserId);
+            return await _userService.GetUserRolesAsync(request.UserId, cancellationToken);
         }
     }
 }

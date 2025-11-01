@@ -18,7 +18,7 @@ namespace eShop.Application.Features.Users.Commands
 
         public async Task<IResponseWrapper> Handle(ChangeUserStatusCommand request, CancellationToken cancellationToken)
         {
-            return await _userService.ChangeUserStatusAsync(request.ChangeUserStatus);
+            return await _userService.ChangeUserStatusAsync(request.ChangeUserStatus, cancellationToken);
         }
     }
 }

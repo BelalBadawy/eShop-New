@@ -16,7 +16,7 @@
 
         public async Task<IResponseWrapper> Handle(GetUserByIdQuery request, CancellationToken cancellationToken)
         {
-            return await _userService.GetUserByIdAsync(request.UserId);
+            return await _userService.GetUserByIdAsync(request.UserId, cancellationToken);
         }
     }
 }

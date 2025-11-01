@@ -15,7 +15,7 @@
 
         public async Task<IResponseWrapper> Handle(GetAllUsersQuery request, CancellationToken cancellationToken)
         {
-            return await _userService.GetAllUsersAsync();
+            return await _userService.GetAllUsersAsync(cancellationToken);
         }
     }
 }

@@ -4,9 +4,9 @@ using eShop.Application.Features.Users.Models.Requests;
 using eShop.Application.Features.Users.Models.Responses;
 using eShop.Application.Helpers;
 using eShop.Application.Models;
+using eShop.Application.Models.Pagination;
 using eShop.Infrastructure.Identity.Constants;
 using eShop.Infrastructure.Identity.Models;
-using IdentityService.Application.Features.Users;
 using Mapster;
 using Microsoft.AspNetCore.Identity;
 
@@ -95,7 +95,7 @@ namespace eShop.Infrastructure.Identity.Services
         }
         #endregion
 
-        public async Task<IResponseWrapper> GetUserByIdAsync(int userId)
+        public async Task<IResponseWrapper> GetUserByIdAsync(int userId, CancellationToken ct)
         {
             var userInDb = await _userManager.FindByIdAsync(userId.ToString());
             if (userInDb is not null)
@@ -106,7 +106,7 @@ namespace eShop.Infrastructure.Identity.Services
             return await ResponseWrapper.FailAsync("User does not exists.");
         }
 
-        public async Task<IResponseWrapper> GetAllUsersAsync()
+        public async Task<IResponseWrapper> GetAllUsersAsync(CancellationToken ct)
         {
             var usersInDb = await _userManager
                 .Users
@@ -121,7 +121,72 @@ namespace eShop.Infrastructure.Identity.Services
             return await ResponseWrapper.FailAsync("No Users were found.");
         }
 
-        public async Task<IResponseWrapper> ChangeUserPasswordAsync(ChangePasswordRequest changePassword)
+
+        public async Task<IResponseWrapper> GetUsersPagedQueryAsync(PagedFilterRequest pagedFilterRequest, CancellationToken ct)
+        {
+
+            var usersQuery = _userManager.Users.AsQueryable();
+
+            // Search
+            if (!string.IsNullOrWhiteSpace(pagedFilterRequest.SearchTerm))
+            {
+                var term = pagedFilterRequest.SearchTerm.ToLower();
+
+                usersQuery = usersQuery.Where(u =>
+                    u.FullName.ToLower().Contains(term) ||
+                    u.Email.ToLower().Contains(term)
+                );
+            }
+
+            // Sorting — no helper method
+            usersQuery = pagedFilterRequest.SortBy?.ToLower() switch
+            {
+                "email" => pagedFilterRequest.SortDirection == "desc"
+                    ? usersQuery.OrderByDescending(u => u.Email)
+                    : usersQuery.OrderBy(u => u.Email),
+
+                "id" => pagedFilterRequest.SortDirection == "desc"
+                    ? usersQuery.OrderByDescending(u => u.Id)
+                    : usersQuery.OrderBy(u => u.Id),
+
+                "fullname" or _ => pagedFilterRequest.SortDirection == "desc"
+                    ? usersQuery.OrderByDescending(u => u.FullName)
+                    : usersQuery.OrderBy(u => u.FullName),
+            };
+
+            // Pagination
+            var totalRecords = await usersQuery.CountAsync(ct);
+
+            var users = await usersQuery
+                .Skip((pagedFilterRequest.PageNumber - 1) * pagedFilterRequest.PageSize)
+                .Take(pagedFilterRequest.PageSize)
+                .Select(o => new UserResponse()
+                {
+                    FullName = o.FullName,
+                    Email = o.Email,
+                    Id = o.Id,
+                    IsActive = o.IsActive,
+                    PhoneNumber = o.PhoneNumber,
+                    UserName = o.UserName,
+                    EmailConfirmed = o.EmailConfirmed
+                })
+                .ToListAsync(ct);
+
+            var data = new PagedResult<UserResponse>
+            {
+                Data = users,
+                TotalCount = totalRecords,
+                CurrentPage = pagedFilterRequest.PageNumber,
+                PageSize = pagedFilterRequest.PageSize,
+
+            };
+
+            return await ResponseWrapper<PagedResult<UserResponse>>.SuccessAsync(data: data);
+
+        }
+
+
+        public async Task<IResponseWrapper> ChangeUserPasswordAsync(ChangePasswordRequest changePassword, CancellationToken ct)
         {
             var userInDb = await _userManager.FindByIdAsync(changePassword.UserId);
             if (userInDb is not null)
@@ -140,7 +205,7 @@ namespace eShop.Infrastructure.Identity.Services
             return await ResponseWrapper.FailAsync("User does not exist.");
         }
 
-        public async Task<IResponseWrapper> ChangeUserStatusAsync(ChangeUserStatusRequest changeUserStatus)
+        public async Task<IResponseWrapper> ChangeUserStatusAsync(ChangeUserStatusRequest changeUserStatus, CancellationToken ct)
         {
             var userInDb = await _userManager.FindByIdAsync(changeUserStatus.UserId);
             if (userInDb is not null)
@@ -162,7 +227,7 @@ namespace eShop.Infrastructure.Identity.Services
             return await ResponseWrapper.FailAsync("User does not exist.");
         }
 
-        public async Task<IResponseWrapper> GetUserRolesAsync(string userId)
+        public async Task<IResponseWrapper> GetUserRolesAsync(string userId, CancellationToken ct)
         {
             var userRolesViewModel = new List<UserRoleViewModel>();
             var userInDb = await _userManager.FindByIdAsync(userId);
@@ -194,7 +259,7 @@ namespace eShop.Infrastructure.Identity.Services
             return await ResponseWrapper.FailAsync("User does not exist.");
         }
 
-        public async Task<IResponseWrapper> UpdateUserRolesAsync(UpdateUserRolesRequest updateUserRoles)
+        public async Task<IResponseWrapper> UpdateUserRolesAsync(UpdateUserRolesRequest updateUserRoles, CancellationToken ct)
         {
             var userInDb = await _userManager.FindByIdAsync(updateUserRoles.UserId);
             if (userInDb is not null)
@@ -228,7 +293,7 @@ namespace eShop.Infrastructure.Identity.Services
             return await ResponseWrapper.FailAsync("User does not exist.");
         }
 
-        public async Task<IResponseWrapper> GetUserByEmailAsync(string email)
+        public async Task<IResponseWrapper> GetUserByEmailAsync(string email, CancellationToken ct)
         {
             var userInDb = await _userManager.FindByEmailAsync(email);
             if (userInDb is not null)
